@@ -3,16 +3,15 @@ executorType: docker
 jobs:
   test:
     docker:
-      - image: circleci/golang:1.12
+      - image: circleci/golang:1.13
     working_directory: /go/src/github.com/utilitywarehouse/lhctl
     steps:
       - type: setup-docker-engine
       - checkout
-      - run: go get
       - run: make test
   release:
     docker:
-      - image: circleci/golang:1.12
+      - image: circleci/golang:1.13
     working_directory: /go/src/github.com/utilitywarehouse/lhctl
     steps:
       - checkout
