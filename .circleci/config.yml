@@ -1,0 +1,30 @@
+version: 2
+executorType: docker
+jobs:
+  test:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/src/github.com/utilitywarehouse/lhctl
+    steps:
+      - type: setup-docker-engine
+      - checkout
+      - run: make test
+  release:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/src/github.com/utilitywarehouse/lhctl
+    steps:
+      - checkout
+      - run: go get
+      - run: curl -sL https://git.io/goreleaser | bash
+workflows:
+  version: 2
+  test_and_release:
+    jobs:
+      - test
+      - release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(-.*)*/
