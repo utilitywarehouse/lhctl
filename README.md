@@ -2,6 +2,10 @@
 
 Attempt to create a simple longhorn CLI to automate upgrading storage nodes.
 
+## Installation
+
+Grab a binary from the available [releases](https://github.com/utilitywarehouse/lhctl/releases)
+
 ## Usage
 
 ```
