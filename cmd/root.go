@@ -15,13 +15,13 @@ var cfgFile string
 var url string
 
 // root manager client
-var mc *util.ManagerClient
+var mc util.ManagerClientInterface
 
 // root error handler
-var eh *util.ErrorHandler
+var eh util.ErrorHandlerInterface
 
 // print output interface
-var pr *util.Printer
+var pr util.PrinterInterface
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -34,9 +34,6 @@ For example:
 # lhctl get volume
 
 # lhctl get node`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -50,13 +47,12 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	cobra.OnInitialize(initManagerClient)
 
 	// Placeholder for config file
 	//rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.lhctl.yaml)")
 	// root persistent flag `url` will be available everywhere in the package
 	rootCmd.PersistentFlags().StringVar(&url, "url", "", "longhorn manager url (example: http://10.88.1.3/v1)")
-	rootCmd.MarkFlagRequired("url")
+	//rootCmd.MarkFlagRequired("url")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -68,7 +64,15 @@ func init() {
 	pr = &util.Printer{}
 }
 
-func initManagerClient() {
+// InitManagerClient: call it before running commangs that need to interact
+// with the longhorn manager api
+func InitManagerClient() {
+	if url == "" {
+		err := errors.New(
+			"You need to provide a url using `--url=` flag",
+		)
+		eh.ExitOnError(err)
+	}
 	// Get a new manager client
 	client, err := util.NewManagerClient(url)
 	if err != nil {
@@ -101,8 +105,4 @@ func initConfig() {
 	//	fmt.Println("Using config file:", viper.ConfigFileUsed())
 	//}
 
-	if url == "" {
-		err := errors.New("You need to provide a url using `--url=` flag")
-		eh.ExitOnError(err)
-	}
 }

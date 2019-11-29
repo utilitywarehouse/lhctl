@@ -18,6 +18,9 @@ For example:
 
 # lhctl --url=http://10.88.1.3/v1 get node
 `,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		InitManagerClient()
+	},
 	Run:        getNodes,
 	ArgAliases: nodeAliases,
 }

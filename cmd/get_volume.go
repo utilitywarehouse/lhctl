@@ -24,6 +24,9 @@ For example:
 ------------------------------------------- ---------- ------------ ------------- ---------- --------------------------------
   pvc-343c4e3c-0090-4453-94a0-0b4a62a979c6 | attached | healthy    | 21474836480 |        3 |                  worker-0
 `,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		InitManagerClient()
+	},
 	Run: getVolumes,
 }
 

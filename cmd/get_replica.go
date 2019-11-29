@@ -26,6 +26,9 @@ For example:
   pvc-17d9c917-b44e-4cac-9f99-6f071ecfb8b9-r-296102e6 | RW   | true    | storage-node-2.dev.merit.uw.systems | /var/lib/storage/replicas/pvc-17d9c917-b44e-4cac-9f99-6f071ecfb8b9-1f957794  
   pvc-17d9c917-b44e-4cac-9f99-6f071ecfb8b9-r-9a599398 | RW   | true    | storage-node-1.dev.merit.uw.systems | /var/lib/storage/replicas/pvc-17d9c917-b44e-4cac-9f99-6f071ecfb8b9-7dc909a4 
 `,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		InitManagerClient()
+	},
 	Run: getReplicas,
 }
 

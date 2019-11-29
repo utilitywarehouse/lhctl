@@ -20,6 +20,9 @@ For example:
 
 # lhctl disable storage-node-0
 `,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		InitManagerClient()
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		validateDisableArgs(cmd, args)
 		disableNode(cmd, args)
