@@ -15,7 +15,6 @@ jobs:
     working_directory: /go/src/github.com/utilitywarehouse/lhctl
     steps:
       - checkout
-      - run: go get
       - run: curl -sL https://git.io/goreleaser | bash
 workflows:
   version: 2
