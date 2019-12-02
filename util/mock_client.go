@@ -110,3 +110,16 @@ func (m *MockManagerClientInterface) RemoveReplica(arg0 client.Volume, arg1 stri
 func (mr *MockManagerClientInterfaceMockRecorder) RemoveReplica(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveReplica", reflect.TypeOf((*MockManagerClientInterface)(nil).RemoveReplica), arg0, arg1)
 }
+
+// VolumeDetach mocks base method
+func (m *MockManagerClientInterface) VolumeDetach(arg0 *client.Volume) (*client.Volume, error) {
+	ret := m.ctrl.Call(m, "VolumeDetach", arg0)
+	ret0, _ := ret[0].(*client.Volume)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// VolumeDetach indicates an expected call of VolumeDetach
+func (mr *MockManagerClientInterfaceMockRecorder) VolumeDetach(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VolumeDetach", reflect.TypeOf((*MockManagerClientInterface)(nil).VolumeDetach), arg0)
+}
