@@ -13,7 +13,7 @@ import (
 func TestParseDetachArgs(t *testing.T) {
 
 	// Test: parse with no args returns error
-	expectedErr := errors.New("volume name not secified")
+	expectedErr := errors.New("volume name not specified")
 	_, err := parseDetachArgs(detachCmd, []string{})
 
 	assert.Equal(t, expectedErr, err)

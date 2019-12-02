@@ -14,7 +14,7 @@ var detachCmd = &cobra.Command{
 	Short: "Detach volume from node",
 	Long: `lhctl detach [volume-name]
 issues a detach command for the requested volume. If more than one arguments
-are passed the rest will be ugnored.
+are passed the rest will be ignored.
 example:
 
 # lhctl detach my-volume
@@ -42,7 +42,7 @@ func init() {
 
 func parseDetachArgs(cmd *cobra.Command, args []string) (string, error) {
 	if len(args) < 1 {
-		return "", errors.New("volume name not secified")
+		return "", errors.New("volume name not specified")
 	}
 
 	return args[0], nil
@@ -65,7 +65,7 @@ func waitForDetachedVol(volume string, seconds int) error {
 	for {
 		vol, _ := mc.GetVolume(volume)
 		if vol.State == "detached" {
-			fmt.Println("Successfully dettached:", volume)
+			fmt.Println("Successfully detached:", volume)
 			return nil
 		}
 		if time.Now().After(deadline) {
