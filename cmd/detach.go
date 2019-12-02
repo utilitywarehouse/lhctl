@@ -63,7 +63,10 @@ func waitForDetachedVol(volume string, seconds int) error {
 
 	deadline := time.Now().Add(time.Duration(seconds) * time.Second)
 	for {
-		vol, _ := mc.GetVolume(volume)
+		vol, err := mc.GetVolume(volume)
+		if err != nil {
+			fmt.Println(err)
+		}
 		if vol.State == "detached" {
 			fmt.Println("Successfully detached:", volume)
 			return nil
@@ -74,6 +77,8 @@ func waitForDetachedVol(volume string, seconds int) error {
 				volume,
 			))
 		}
+		// sleep a second to avoid hammering cpu
+		time.Sleep(1 * time.Second)
 	}
 
 	return nil

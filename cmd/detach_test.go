@@ -115,7 +115,7 @@ func TestWaitForDetachedVol(t *testing.T) {
 			Return(detached, nil),
 	)
 
-	err := waitForDetachedVol("volume", 1)
+	err := waitForDetachedVol("volume", 5)
 	assert.Equal(t, nil, err)
 
 	// Test: already disabled
