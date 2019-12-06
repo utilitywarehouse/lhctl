@@ -7,7 +7,7 @@ import (
 // deleteCmd represents the get command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete resources resources",
+	Short: "Delete resources",
 	Long: `lhctl delete [resource].
 For example:
 
