@@ -16,6 +16,7 @@ type ManagerClientInterface interface {
 	UpdateNode(*client.Node, interface{}) (*client.Node, error)
 	RemoveReplica(client.Volume, string) (*client.Volume, error)
 	VolumeDetach(*client.Volume) (*client.Volume, error)
+	UpdateReplicaCount(*client.Volume, int64) (*client.Volume, error)
 }
 
 func NewManagerClient(url string) (*ManagerClient, error) {
@@ -64,4 +65,17 @@ func (mc ManagerClient) RemoveReplica(volume client.Volume, replicaName string) 
 
 func (mc ManagerClient) VolumeDetach(volume *client.Volume) (*client.Volume, error) {
 	return mc.rancherClient.Volume.ActionDetach(volume)
+}
+
+func (mc ManagerClient) UpdateReplicaCount(volume *client.Volume, replicaCount int64) (*client.Volume, error) {
+	// ActionUpdateReplicaCount is missing from generated client volume
+	// files, so let's rewrite it here.
+	input := &client.UpdateReplicaCountInput{
+		ReplicaCount: replicaCount,
+	}
+	resp := &client.Volume{}
+	VOLUME_TYPE := "volume"
+	err := mc.rancherClient.Action(VOLUME_TYPE, "updateReplicaCount", &volume.Resource, input, resp)
+
+	return resp, err
 }

@@ -58,6 +58,7 @@ func getVolumes(cmd *cobra.Command, args []string) {
 				volume.State,
 				volume.Robustness,
 				volume.Size,
+				strconv.FormatInt(volume.NumberOfReplicas, 10),
 				strconv.Itoa(len(volume.Replicas)),
 				volume.Controllers[0].HostId,
 			})
@@ -71,7 +72,15 @@ func getVolumes(cmd *cobra.Command, args []string) {
 
 	pr.PrintWithColumns(
 		out,
-		[]string{"Name", "State", "Robustness", "Size", "Replicas", "Attached to"},
+		[]string{
+			"Name",
+			"State",
+			"Robustness",
+			"Size",
+			"Replica Count",
+			"Active Replicas",
+			"Attached to",
+		},
 	)
 
 }

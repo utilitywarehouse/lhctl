@@ -123,3 +123,16 @@ func (m *MockManagerClientInterface) VolumeDetach(arg0 *client.Volume) (*client.
 func (mr *MockManagerClientInterfaceMockRecorder) VolumeDetach(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VolumeDetach", reflect.TypeOf((*MockManagerClientInterface)(nil).VolumeDetach), arg0)
 }
+
+// UpdateReplicaCount mocks base method
+func (m *MockManagerClientInterface) UpdateReplicaCount(arg0 *client.Volume, arg1 int64) (*client.Volume, error) {
+	ret := m.ctrl.Call(m, "UpdateReplicaCount", arg0, arg1)
+	ret0, _ := ret[0].(*client.Volume)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateReplicaCount indicates an expected call of UpdateReplicaCount
+func (mr *MockManagerClientInterfaceMockRecorder) UpdateReplicaCount(arg0, arg1 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateReplicaCount", reflect.TypeOf((*MockManagerClientInterface)(nil).UpdateReplicaCount), arg0, arg1)
+}
