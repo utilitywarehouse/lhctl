@@ -167,7 +167,7 @@ func TestWaitForReplicaDeletion(t *testing.T) {
 			Times(1).
 			Return(&lh_client.Volume{}, nil),
 	)
-	err = waitForReplicaDeletion(1)
+	err = waitForReplicaDeletion(5)
 	assert.Equal(t, nil, err)
 
 	// Test: replica already gone
@@ -176,6 +176,6 @@ func TestWaitForReplicaDeletion(t *testing.T) {
 		Times(1).
 		Return(&lh_client.Volume{}, nil)
 
-	err = waitForReplicaDeletion(1)
+	err = waitForReplicaDeletion(5)
 	assert.Equal(t, nil, err)
 }
