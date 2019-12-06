@@ -16,6 +16,7 @@ type ManagerClientInterface interface {
 	UpdateNode(*client.Node, interface{}) (*client.Node, error)
 	RemoveReplica(client.Volume, string) (*client.Volume, error)
 	VolumeDetach(*client.Volume) (*client.Volume, error)
+	VolumeAttach(*client.Volume, string) (*client.Volume, error)
 	UpdateReplicaCount(*client.Volume, int64) (*client.Volume, error)
 }
 
@@ -65,6 +66,13 @@ func (mc ManagerClient) RemoveReplica(volume client.Volume, replicaName string) 
 
 func (mc ManagerClient) VolumeDetach(volume *client.Volume) (*client.Volume, error) {
 	return mc.rancherClient.Volume.ActionDetach(volume)
+}
+
+func (mc ManagerClient) VolumeAttach(volume *client.Volume, hostId string) (*client.Volume, error) {
+	input := &client.AttachInput{
+		HostId: hostId,
+	}
+	return mc.rancherClient.Volume.ActionAttach(volume, input)
 }
 
 func (mc ManagerClient) UpdateReplicaCount(volume *client.Volume, replicaCount int64) (*client.Volume, error) {
