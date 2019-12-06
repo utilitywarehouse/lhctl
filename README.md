@@ -8,8 +8,22 @@ Grab a binary from the available [releases](https://github.com/utilitywarehouse/
 
 ## Usage
 
+The cli client needs an http endpoint for most of the available commands.
+Currently that could be done with `--url=` flag. That could be easily obtained
+by kubernetes, for example:
+
+```
+CONTEXT=<kube-context>
+NAMESPACE=<longhorn-namespace>
+LH_SVC=$(kubectl --context=${CONTEXT} --namespace=${NAMESPACE} get svc | grep longhorn-frontend | awk '{print $4}')
+lhctl --url=http://${LH_SVC}/v1 get volume
+```
+
+Available commands can be see using help:
+
 ```
 # lhctl --help
+
 CLI to perform basic actions against longhorn api to help with
 automated tasks.
 For example:
@@ -22,12 +36,15 @@ Usage:
   lhctl [command]
 
 Available Commands:
+  attach      Attach volume from node
   completion  Generates bash completion scripts
   delete      Delete resources resources
+  detach      Detach volume from node
   disable     Disable scheduling on node
   enable      Enable scheduling on node
   get         List resources
   help        Help about any command
+  update      Update resources
 
 Flags:
   -h, --help         help for lhctl
@@ -35,11 +52,7 @@ Flags:
       --url string   longhorn manager url (example: http://10.88.1.3/v1)
 
 Use "lhctl [command] --help" for more information about a command.
-
 ```
-
-Currently you need to procide `--url=` flag for all the commands that interact
-with longhorn api.
 
 ## Completion
 

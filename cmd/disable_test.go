@@ -120,12 +120,12 @@ func TestWaitForDisabledNode(t *testing.T) {
 			Return(disabled, nil),
 	)
 
-	err := waitForDisabledNode("node", 1)
+	err := waitForDisabledNode("node", 5)
 	assert.Equal(t, nil, err)
 
 	// Test: already disabled
 	mockClient.EXPECT().GetNode("node").Times(1).Return(disabled, nil)
 
-	err = waitForDisabledNode("node", 1)
+	err = waitForDisabledNode("node", 5)
 	assert.Equal(t, nil, err)
 }

@@ -115,6 +115,8 @@ func waitForReplicaDeletion(seconds int) error {
 		if !replicaFound {
 			return nil
 		}
+		// sleep a second to avoid hammering cpu
+		time.Sleep(1 * time.Second)
 	}
 
 	return nil

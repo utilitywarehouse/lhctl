@@ -68,7 +68,10 @@ func waitForDisabledNode(nodeId string, seconds int) error {
 
 	deadline := time.Now().Add(time.Duration(seconds) * time.Second)
 	for {
-		node, _ := mc.GetNode(nodeId)
+		node, err := mc.GetNode(nodeId)
+		if err != nil {
+			fmt.Println(err)
+		}
 		if !node.AllowScheduling {
 			fmt.Println("Scheduling disabled for node:", nodeId)
 			return nil
@@ -79,6 +82,8 @@ func waitForDisabledNode(nodeId string, seconds int) error {
 				nodeId,
 			))
 		}
+		// sleep a second to avoid hammering cpu
+		time.Sleep(1 * time.Second)
 	}
 
 	return nil
