@@ -128,10 +128,10 @@ contexts:
   pass: test
 - name: context-2
   url: https://longhorn.context.two
-  user: test
-  pass: test
 default: context-1
 ```
 
 The desire context can be specified via `--context` flag, otherwise the default
 context will be assumed.
+User and pass are of course optional and rely on the user's ui setup as
+described above.
