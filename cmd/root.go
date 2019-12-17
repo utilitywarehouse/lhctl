@@ -63,11 +63,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&userFlag, "user", "", "user for http request")
 	rootCmd.PersistentFlags().StringVar(&passFlag, "pass", "", "password for http request")
 	rootCmd.PersistentFlags().StringVar(&contextFlag, "context", "", "config file context")
-	//rootCmd.MarkFlagRequired("url")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	// init error handler
 	eh = &util.ErrorHandler{}
@@ -184,7 +179,6 @@ func initConfig() {
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".lhctl")
 	}
-	//viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {

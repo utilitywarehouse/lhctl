@@ -51,7 +51,6 @@ Flags:
       --context string   config file context
   -h, --help             help for lhctl
       --pass string      password for http request
-  -t, --toggle           Help message for toggle
       --url string       longhorn manager url (example: http://10.88.1.3/v1)
       --user string      user for http request
 
