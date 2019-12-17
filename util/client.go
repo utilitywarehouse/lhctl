@@ -20,9 +20,11 @@ type ManagerClientInterface interface {
 	UpdateReplicaCount(*client.Volume, int64) (*client.Volume, error)
 }
 
-func NewManagerClient(url string) (*ManagerClient, error) {
+func NewManagerClient(url, user, pass string) (*ManagerClient, error) {
 	rc, err := client.NewRancherClient(&client.ClientOpts{
-		Url: url,
+		Url:       url,
+		AccessKey: user,
+		SecretKey: pass,
 	})
 	if err != nil {
 		return nil, err
