@@ -4,8 +4,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var validArgs = []string{"node", "replica", "volume"}
-var argAliases = []string{"nodes", "replicas", "volumes"}
+var validGetArgs = []string{"node", "replica", "volume"}
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
@@ -15,8 +14,7 @@ var getCmd = &cobra.Command{
 For example:
 
 # lhctl get volume`,
-	ValidArgs:  validArgs,
-	ArgAliases: argAliases,
+	ValidArgs: validGetArgs,
 }
 
 func init() {

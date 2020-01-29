@@ -21,28 +21,33 @@ func TestValidateDeleteReplicaArgs(t *testing.T) {
 
 	// Test: validate with no args raise error
 	expectedErr := errors.New("No replica name specified")
-	err := validateDeleteReplicaArgs(deletereplicaCmd, []string{})
+	_, _, err := validateDeleteReplicaArgs(deletereplicaCmd, []string{})
 
 	assert.Equal(t, expectedErr, err)
 
 	// Test: validate errors when list volumes errors
 	listingErr := errors.New("No replica name specified")
 	mockClient.EXPECT().ListVolumes().Times(1).Return(nil, listingErr)
-	err = validateDeleteReplicaArgs(deletereplicaCmd, []string{"replica"})
+	_, _, err = validateDeleteReplicaArgs(deletereplicaCmd, []string{"replica"})
 
 	assert.Equal(t, listingErr, err)
 
 	// Test: Replica not found returns error
 	volumes := []lh_client.Volume{
-		lh_client.Volume{},
+		lh_client.Volume{
+			Name: "volume",
+		},
 	}
 	volumes[0].Replicas = []lh_client.Replica{}
 	mockClient.EXPECT().ListVolumes().Times(1).Return(volumes, nil)
-	err = validateDeleteReplicaArgs(deletereplicaCmd, []string{"replica"})
+	_, _, err = validateDeleteReplicaArgs(
+		deletereplicaCmd,
+		[]string{"replica"},
+	)
 
 	expectedErr = errors.New(fmt.Sprintf(
 		"Replica not found: %s",
-		ReplicaName,
+		"replica",
 	))
 	assert.Equal(t, expectedErr, err)
 
@@ -52,21 +57,21 @@ func TestValidateDeleteReplicaArgs(t *testing.T) {
 		lh_client.Replica{Name: "replica"},
 	)
 	mockClient.EXPECT().ListVolumes().Times(1).Return(volumes, nil)
-	err = validateDeleteReplicaArgs(deletereplicaCmd, []string{"replica"})
+	r, v, err := validateDeleteReplicaArgs(deletereplicaCmd, []string{"replica"})
 
-	assert.Equal(t, ReplicaName, "replica")
-	assert.Equal(t, ReplicaVolume, volumes[0])
+	assert.Equal(t, r, "replica")
+	assert.Equal(t, v, "volume")
 	assert.Equal(t, nil, err)
 
 	// Test: Additional arguments ignored
 	mockClient.EXPECT().ListVolumes().Times(1).Return(volumes, nil)
-	err = validateDeleteReplicaArgs(
+	r, v, err = validateDeleteReplicaArgs(
 		deletereplicaCmd,
 		[]string{"replica", "other"},
 	)
 
-	assert.Equal(t, ReplicaName, "replica")
-	assert.Equal(t, ReplicaVolume, volumes[0])
+	assert.Equal(t, r, "replica")
+	assert.Equal(t, v, "volume")
 	assert.Equal(t, nil, err)
 }
 
@@ -79,24 +84,39 @@ func TestDeleteReplica(t *testing.T) {
 	// override the package scoped manager client
 	mc = mockClient
 
-	ReplicaName = "replica"
-	ReplicaVolume = lh_client.Volume{}
+	replicaName := "replica"
+	volumeName := "volume"
+	retVolume := &lh_client.Volume{
+		Name: volumeName,
+	}
+
+	// Test: GetVolume failed
+	getVolumeErr := errors.New("Get volume error")
+	mockClient.EXPECT().
+		GetVolume(volumeName).Times(1).Return(nil, getVolumeErr)
+
+	err := deleteReplica(replicaName, volumeName)
+	assert.Equal(t, getVolumeErr, err)
 
 	// Test: Delete failed
 	deleteErr := errors.New("Delete error")
 	mockClient.EXPECT().
-		RemoveReplica(ReplicaVolume, ReplicaName).
+		GetVolume(volumeName).Times(1).Return(retVolume, nil)
+	mockClient.EXPECT().
+		RemoveReplica(*retVolume, replicaName).
 		Times(1).Return(nil, deleteErr)
 
-	err := deleteReplica()
+	err = deleteReplica(replicaName, volumeName)
 	assert.Equal(t, deleteErr, err)
 
 	// Test: Delete passed no err
 	mockClient.EXPECT().
-		RemoveReplica(ReplicaVolume, ReplicaName).
+		GetVolume(volumeName).Times(1).Return(retVolume, nil)
+	mockClient.EXPECT().
+		RemoveReplica(*retVolume, replicaName).
 		Times(1).Return(nil, nil)
 
-	err = deleteReplica()
+	err = deleteReplica(replicaName, volumeName)
 	assert.Equal(t, nil, err)
 }
 
@@ -108,24 +128,26 @@ func TestTimeoutWhileWaitingForDeletion(t *testing.T) {
 	// override the package scoped manager client
 	mc = mockClient
 
-	ReplicaVolume = lh_client.Volume{}
-	ReplicaVolume.Name = "volume"
-	ReplicaName = "replica"
-	ReplicaVolume.Replicas = []lh_client.Replica{
-		lh_client.Replica{Name: ReplicaName},
+	replicaName := "replica"
+	volumeName := "volume"
+	retVolume := &lh_client.Volume{
+		Name: volumeName,
+	}
+	retVolume.Replicas = []lh_client.Replica{
+		lh_client.Replica{Name: replicaName},
 	}
 
 	// Test: timeout and error
 	mockClient.EXPECT().
-		GetVolume(ReplicaVolume.Name).
+		GetVolume(volumeName).
 		AnyTimes().
-		Return(&ReplicaVolume, nil)
+		Return(retVolume, nil)
 
-	err := waitForReplicaDeletion(1)
+	err := waitForReplicaDeletion(replicaName, volumeName, 1)
 
 	timeoutErr := errors.New(fmt.Sprintf(
 		"timeout while deleting %s",
-		ReplicaName,
+		replicaName,
 	))
 	assert.Equal(t, timeoutErr, err)
 }
@@ -138,44 +160,46 @@ func TestWaitForReplicaDeletion(t *testing.T) {
 	// override the package scoped manager client
 	mc = mockClient
 
-	ReplicaVolume = lh_client.Volume{}
-	ReplicaVolume.Name = "volume"
-	ReplicaName = "replica"
-	ReplicaVolume.Replicas = []lh_client.Replica{
-		lh_client.Replica{Name: ReplicaName},
+	replicaName := "replica"
+	volumeName := "volume"
+	retVolume := &lh_client.Volume{
+		Name: volumeName,
+	}
+	retVolume.Replicas = []lh_client.Replica{
+		lh_client.Replica{Name: replicaName},
 	}
 
 	// Test: error on getting volumes
 	volumeErr := errors.New("volume error")
 	mockClient.EXPECT().
-		GetVolume(ReplicaVolume.Name).
+		GetVolume(volumeName).
 		Times(1).
-		Return(&ReplicaVolume, volumeErr)
+		Return(retVolume, volumeErr)
 
-	err := waitForReplicaDeletion(1)
+	err := waitForReplicaDeletion(replicaName, volumeName, 1)
 	assert.Equal(t, volumeErr, err)
 
 	// Test: replica deleted while trying
 
 	gomock.InOrder(
 		mockClient.EXPECT().
-			GetVolume(ReplicaVolume.Name).
+			GetVolume(volumeName).
 			Times(3).
-			Return(&ReplicaVolume, nil),
+			Return(retVolume, nil),
 		mockClient.EXPECT().
-			GetVolume(ReplicaVolume.Name).
+			GetVolume(volumeName).
 			Times(1).
 			Return(&lh_client.Volume{}, nil),
 	)
-	err = waitForReplicaDeletion(5)
+	err = waitForReplicaDeletion(replicaName, volumeName, 5)
 	assert.Equal(t, nil, err)
 
 	// Test: replica already gone
 	mockClient.EXPECT().
-		GetVolume(ReplicaVolume.Name).
+		GetVolume(volumeName).
 		Times(1).
 		Return(&lh_client.Volume{}, nil)
 
-	err = waitForReplicaDeletion(5)
+	err = waitForReplicaDeletion(replicaName, volumeName, 5)
 	assert.Equal(t, nil, err)
 }

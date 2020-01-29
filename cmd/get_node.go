@@ -8,21 +8,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var nodeAliases = []string{"nodes"}
-
 var getnodeCmd = &cobra.Command{
 	Use:   "node",
 	Short: "Returns nodes information",
 	Long: `View the nodes' longhorn attributes
-For example:
 
-# lhctl --url=http://10.88.1.3/v1 get node
+example:
+# lhctl get node
 `,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		InitManagerClient()
 	},
-	Run:        getNodes,
-	ArgAliases: nodeAliases,
+	Run: getNodes,
 }
 
 func init() {
