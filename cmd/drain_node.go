@@ -22,6 +22,11 @@ Drain node steps:
 2. Iterate through the replicas that live on the node and delete in case the
 above conditions are met, else wait and retry.
 
+In case an error occurs while deleting a replica the command logs the error and
+proceeds, ignoring if the replica is still on the node or not. If this command
+is used to perform upgrades, longhorn will clean any failed leftover replicas
+after a while.
+
 There is no timeout in the command, so if the conditions never allow deleting a
 replica the command will loop forever trying.
 
@@ -98,6 +103,9 @@ func drainNode(nodeName string) error {
 
 	var wg sync.WaitGroup
 
+	// Iterate through replica list and drain on best effort. If we receive
+	// an error while issuing the remove command or waiting to verify
+	// deletion just log and proceed.
 	for _, volume := range filteredVolumes {
 		for _, replica := range volume.Replicas {
 			if replica.HostId == nodeName {
