@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	//lh_client "github.com/longhorn/longhorn-manager/client"
 )
 
 // deletereplicaCmd is the command to delete a replica
