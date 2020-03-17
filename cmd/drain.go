@@ -11,7 +11,6 @@ var (
 	DrainTargetNode string
 )
 
-// attachCmd represents the attach command
 var drainCmd = &cobra.Command{
 	Use:   "drain",
 	Short: "Drain replicas from a node",
