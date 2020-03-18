@@ -1,6 +1,7 @@
 # Build customization
 builds:
-  - goos:
+  - id: main
+    goos:
       - windows
       - darwin
       - linux
@@ -14,5 +15,9 @@ release:
   github:
     owner: utilitywarehouse
     name: lhctl
-archive:
-  format: binary
+archives:
+  - builds:
+    - main
+    format: binary
+    files:
+    - none*
