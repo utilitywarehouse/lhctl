@@ -1,8 +1,7 @@
 package util
 
 import (
-	"fmt"
-	"os"
+	"log"
 	"strings"
 )
 
@@ -19,9 +18,5 @@ func (eh *ErrorHandler) ExitOnError(err error, msg ...string) {
 		errMsg = strings.Join(msg, ", ")
 	}
 
-	fmt.Println(fmt.Sprintf("%s: %v",
-		errMsg,
-		err,
-	))
-	os.Exit(1)
+	log.Fatalf("%s: %v", errMsg, err)
 }
