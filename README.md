@@ -1,5 +1,7 @@
 # lhctl
 
+**This repository is no longer supported and we will not be adding new features**
+
 Attempt to create a simple longhorn CLI to automate upgrading storage nodes.
 
 ## Installation
